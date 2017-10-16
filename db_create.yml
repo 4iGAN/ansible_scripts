@@ -1,0 +1,32 @@
+- hosts: localhost
+  vars_prompt:
+    - name: "db_name"
+      prompt: "what is db name?"
+    - name: "admin_name"
+      prompt: "what is admin name?"
+    - name: "admin_password"
+      prompt: "what is admin password?"
+
+  tasks:
+    - name: Create DB {{db_name}}
+      become: true
+      become_user: postgres
+      postgresql_db:
+        name={{db_name}}
+        encoding='UTF-8'
+
+    - name: Create Admin {{admin_name}}
+      become: true
+      become_user: postgres
+      postgresql_user: 
+        db={{db_name}}
+        name={{admin_name}} 
+        password={{admin_password}}
+        role_attr_flags=CREATEDB
+
+    - name: Add extensions for FTS
+      become: true
+      become_user: postgres
+      postgresql_ext:
+        name=pg_trgm
+        db={{db_name}}
