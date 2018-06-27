@@ -1,0 +1,12 @@
+- hosts: localhost
+  vars_prompt:
+    - name: "db_name"
+      prompt: "what is db name for remove?"
+
+  tasks:
+    - name: Delete DB {{db_name}}
+      become: true
+      become_user: postgres
+      postgresql_db:
+        name={{db_name}}
+        state=absent
